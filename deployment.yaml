@@ -16,6 +16,16 @@ spec:
     spec:
       containers:
       - name: restaurant-app
+        command: ['/usr/local/bin/serve', '-s', 'build']
+        image: nzorro/restaurant-app:latest
+      - name: restaurant-service
+        command: ['/bin/sh','-c','cd restaurantService && /usr/local/bin/node ./start.js']
+        image: nzorro/restaurant-app:latest
+      - name: checkout
+        command: ['/bin/sh','-c','cd checkoutService && /usr/local/bin/node ./start.js']
+        image: nzorro/restaurant-app:latest
+      - name: menu
+        command: ['/bin/sh','-c','cd menuService && /usr/local/bin/node ./start.js']
         image: nzorro/restaurant-app:latest
       imagePullSecrets:
       - name: regcred
