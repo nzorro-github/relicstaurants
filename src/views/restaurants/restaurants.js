@@ -17,7 +17,7 @@ const Restaurants = () => {
   const [filters, setFilters] = useState({
     rating: 0,
     prices: 0,
-    cuisine: undefined,
+    cuisine: undefined
   });
 
   const { Panel } = Collapse;
