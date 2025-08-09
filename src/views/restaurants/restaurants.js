@@ -24,7 +24,7 @@ const Restaurants = () => {
   const [form] = Form.useForm();
 
   const getRestaurants = async () => {
-    const url  =
+    const url =
     process.env.REACT_APP_RESTAURANT_SERVICE_URL ||
     'http://localhost:3001/api/restaurants';
 

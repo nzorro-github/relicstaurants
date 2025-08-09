@@ -1,5 +1,7 @@
 FROM node:22.0.0-alpine
 
+USER 1001
+
 WORKDIR /app
 
 COPY package*.json ./
