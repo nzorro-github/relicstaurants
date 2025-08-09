@@ -13,20 +13,49 @@ spec:
     metadata:
       labels:
         app: restaurant-app
-    spec:
+# spec:
+      initContainers:
+      - name: mongo-seed
+        image: nzorro/restaurant-app:latest
+        command: ["node", "/app/restaurantService/seed.js"]
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://localhost:27017/restaurantdb"
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
       containers:
+      - name: mongodb
+        image: mongo:6
+        args: ["--bind_ip", "0.0.0.0"]
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
       - name: restaurant-app
         command: ['/usr/local/bin/serve', '-s', 'build']
         image: nzorro/restaurant-app:latest
       - name: restaurant-service
         command: ['/bin/sh','-c','cd restaurantService && /usr/local/bin/node ./start.js']
         image: nzorro/restaurant-app:latest
+        env:
+        - name: STORAGE
+          value: "mongo"
+        - name: MONGODB_URI
+          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
       - name: checkout
         command: ['/bin/sh','-c','cd checkoutService && /usr/local/bin/node ./start.js']
         image: nzorro/restaurant-app:latest
       - name: menu
         command: ['/bin/sh','-c','cd menuService && /usr/local/bin/node ./start.js']
         image: nzorro/restaurant-app:latest
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+      volumes:
+      - name: mongo-data
+        emptyDir: {}
       imagePullSecrets:
       - name: regcred
 
@@ -57,3 +86,16 @@ spec:
     port: 3003
     targetPort: 3003
   type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-mongo-svc
+spec:
+  selector:
+    app: restaurant-app
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  type: ClusterIP
