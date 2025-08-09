@@ -1,11 +1,13 @@
-FROM node
+FROM node:bullseye-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    dnsutils
 
 WORKDIR /app
 
 COPY . .
-
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 RUN cd checkoutService && npm install
 
 RUN cd menuService && npm install 
@@ -17,6 +19,6 @@ RUN chown -R 1001:1001 /app
 USER 1001
 
 # run:
-CMD ["npx", "concurrently", "npm:checkoutService", "npm:menuService", "npm:restaurantService", "npm:start", "--kill-others"]
+CMD ["serve", "-s", "build"]
 
 
