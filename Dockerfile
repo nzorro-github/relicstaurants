@@ -8,6 +8,13 @@ RUN npm install
 
 COPY . .
 
-RUN make install
+RUN cd checkoutService && npm install
 
-ENTRYPOINT ["make", "run"]
+RUN cd menuService && npm install
+
+RUN cd restaurantService && npm install
+
+# run:
+CMD ["npx", "concurrently", "npm:checkoutService", "npm:menuService", "npm:restaurantService", "npm:start", "--kill-others"]
+
+
