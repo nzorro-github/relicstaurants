@@ -1,20 +1,17 @@
-FROM node:22.0.0-alpine
-
-USER 1001
+FROM node
 
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm install
-
 COPY . .
 
+RUN npm install
 RUN cd checkoutService && npm install
 
 RUN cd menuService && npm install
 
 RUN cd restaurantService && npm install
+RUN chown -R 1001:1001 /app
+USER 1001
 
 # run:
 CMD ["npx", "concurrently", "npm:checkoutService", "npm:menuService", "npm:restaurantService", "npm:start", "--kill-others"]

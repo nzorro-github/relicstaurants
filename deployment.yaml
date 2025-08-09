@@ -30,7 +30,20 @@ spec:
   selector:
     app: restaurant-app
   ports:
-  - protocol: TCP
+  - name: main
+    protocol: TCP
     port: 3000
     targetPort: 3000
+  - name: restaurant-service
+    protocol: TCP
+    port: 3001
+    targetPort: 3001
+  - name: checkout-service
+    protocol: TCP
+    port: 3002
+    targetPort: 3002
+  - name: menu-service
+    protocol: TCP
+    port: 3003
+    targetPort: 3003
   type: LoadBalancer

@@ -25,8 +25,8 @@ const Restaurants = () => {
 
   const getRestaurants = async () => {
     const url =
-    process.env.REACT_APP_RESTAURANT_SERVICE_URL ||
-    'http://localhost:3001/api/restaurants';
+      process.env.REACT_APP_RESTAURANT_SERVICE_URL ||
+      'http://localhost:3001/api/restaurants';
 
     const { data } = await axios.get(url);
     return data;
