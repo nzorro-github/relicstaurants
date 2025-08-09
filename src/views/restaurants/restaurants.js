@@ -17,14 +17,17 @@ const Restaurants = () => {
   const [filters, setFilters] = useState({
     rating: 0,
     prices: 0,
-    cuisine: undefined
+    cuisine: undefined,
   });
 
   const { Panel } = Collapse;
   const [form] = Form.useForm();
 
   const getRestaurants = async () => {
-    const url  = process.env.REACT_APP_RESTAURANT_SERVICE_URL || 'http://localhost:3001/api/restaurants';
+    const url  =
+    process.env.REACT_APP_RESTAURANT_SERVICE_URL ||
+    'http://localhost:3001/api/restaurants';
+
     const { data } = await axios.get(url);
     return data;
   };
