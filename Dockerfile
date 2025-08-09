@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN make install
 
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["make", "run"]
