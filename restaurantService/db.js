@@ -53,4 +53,4 @@ class MongoStorage {
     }
 }
 
-exports.Mongo = MongoStorage;
+exports.MongoStorage = MongoStorage;

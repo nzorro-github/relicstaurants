@@ -27,7 +27,7 @@ spec:
         command: ['/usr/local/bin/serve', '-s', 'build']
         image: nzorro/restaurant-app:latest
       - name: restaurant-service
-        command: ['/bin/sh','-c','cd restaurantService && /usr/local/bin/node ./start.js']
+        command: ['node', './restaurantService/start.js']
         image: nzorro/restaurant-app:latest
         env:
         - name: STORAGE
@@ -35,10 +35,10 @@ spec:
         - name: MONGODB_URI
           value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
       - name: checkout
-        command: ['/bin/sh','-c','cd checkoutService && /usr/local/bin/node ./start.js']
+        command: ['node', './checkoutService/start.js']
         image: nzorro/restaurant-app:latest
       - name: menu
-        command: ['/bin/sh','-c','cd menuService && /usr/local/bin/node ./start.js']
+        command: ['node', './menuService/start.js']
         image: nzorro/restaurant-app:latest
         env:
         - name: MONGODB_URI
