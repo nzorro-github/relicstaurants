@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 var RestaurantRecord = require('./model').Restaurant;
 var MemoryStorage = require('./storage').Memory;
-let MongoStorage = require('./db').MongoStorage;
+let MongoStorage = require('./db').Mongo;
 
 var API_URL = '/api/restaurants';
 
