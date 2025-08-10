@@ -1,6 +1,6 @@
 const { MongoClient, ObjectId } = require('mongodb');
 var RestaurantRecord = require('./model').Restaurant;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://restaurant-mongo-svc:27017/restaurantdb';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 let client = null;
 
 // Seed database if the collection is empty
@@ -16,25 +16,24 @@ class MongoStorage {
     }
 
     async _connect() {
-        if (!client.topology || !client.topology.isConnected()) {
+        if (!client.topology || 
+            !client.topology.isConnected()) {
             await client.connect();
         }
     }
 
     async getAll() {
         await this._connect();
-        const items = await this.collection.find().toArray()[0];
-	    
-  	var restaurantItems = [];
-	if(items) {
-            console.log(items);
-	    items.forEach((item, i) => {
-		const record =  { ...item };
-	        console.log(`Item ${i}: ${item}, record=${record} `);
-	        restaurantItems.push(new RestaurantRecord(record));
-	    });
-	}
-	    
+        const items = await this.collection.find().toArray();
+
+        let restaurantItems = [];
+        if (items && items.length) {
+            items.forEach((item, i) => {
+                const record = { ...item };
+                restaurantItems.push(new RestaurantRecord(record));
+            });
+        }
+
         return restaurantItems;
     }
 
@@ -43,13 +42,11 @@ class MongoStorage {
         const item = { ...data };
         
         await this.collection.insertOne(item);
-        return ;
     }
 
     async getById(id) {
         await this._connect();
         const item = await this.collection.findOne({ id: id });
-	// item._id = null;
         return item ? {  ...item } : null;
     }
 

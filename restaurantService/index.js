@@ -44,9 +44,22 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE) {
 
 
   // API
-  app.get(API_URL, function(_req, res, _next) {
-    const response = res.status(200).send(storage.getAll().map(removeMenuItems));
-    return response;
+  app.get(API_URL, async function(_req, res, _next) {
+    // get all restaurants
+    // and remove menuItems from the response
+    try {
+      const items = await storage.getAll();
+      if (!items || items.length === 0) {
+        return res.status(404).send({ error: 'No restaurants found' });
+      }
+      console.log(`Found ${items.length} restaurants`);
+
+      const response = res.status(200).send(items.map(removeMenuItems));
+      return response;
+    } catch (err) {
+      console.error('Failed to fetch restaurants:', err);
+      return res.status(500).send({ error: 'Failed to fetch restaurants' });
+    }
   });
 
 
