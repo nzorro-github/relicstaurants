@@ -13,17 +13,7 @@ spec:
     metadata:
       labels:
         app: restaurant-app
-# spec:
-      initContainers:
-      - name: mongo-seed
-        image: nzorro/restaurant-app:latest
-        command: ["node", "/app/restaurantService/seed.js"]
-        env:
-        - name: MONGODB_URI
-          value: "mongodb://localhost:27017/restaurantdb"
-        volumeMounts:
-        - name: mongo-data
-          mountPath: /data/db
+    spec:
       containers:
       - name: mongodb
         image: mongo:6
@@ -53,6 +43,18 @@ spec:
         env:
         - name: MONGODB_URI
           value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+            
+      initContainers:  
+      - name: mongo-seed
+        image: nzorro/restaurant-app:latest
+        command: ["node", "/app/restaurantService/seed.js"]
+        restartPolicy: Always
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
       volumes:
       - name: mongo-data
         emptyDir: {}
