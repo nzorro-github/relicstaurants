@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 
 var RestaurantRecord = require('./model').Restaurant;
 var MemoryStorage = require('./storage').Memory;
+let MongoStorage = require('./db').MongoStorage;
 
 var API_URL = '/api/restaurants';
 
@@ -22,8 +23,8 @@ var removeMenuItems = function(restaurant) {
 
 
 exports.start = function(PORT, STATIC_DIR, DATA_FILE) {
-  var app = express();
-  var storage = new MemoryStorage();
+  const app = express();
+  const storage = new MongoStorage();
 
   // log requests
   app.use(logger('combined'));

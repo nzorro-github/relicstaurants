@@ -3,7 +3,7 @@ const path = require('path');
 const MongoClient = require('mongodb').MongoClient;
 
 const uri = 'mongodb://localhost:27017'; // replace with your MongoDB connection string
-const dbName = 'mydatabase';
+const dbName = 'restaurantdb';
 const collectionName = 'restaurants';
 
 async function seedDatabase() {
