@@ -13,7 +13,11 @@ import {
 } from './single-restaurant.styled';
 
 const getRestaurant = async (id) => {
-  const { data } = await axios.get(`http://lvh.me:3003/api/menu/${id}`);
+  const url =
+    `http://restaurant-app-svc:3003/api/menu/${id}` ||
+    `http://lvh.me:3003/api/menu/${id}`;
+  console.log(url);
+  const { data } = await axios.get(url);
 
   return data;
 };

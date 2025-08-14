@@ -38,9 +38,9 @@ exports.start = function(PORT, STATIC_DIR, DATA_FILE) {
   // start the server
   // read the data from json and start the server
   fs.readFile(DATA_FILE, function(_err, data) {
-    JSON.parse(data).forEach(function(restaurant) {
-      storage.add(new RestaurantRecord(restaurant));
-    });
+    // JSON.parse(data).forEach(function(restaurant) {
+    //   storage.add(new RestaurantRecord(restaurant));
+    // });
 
     app.listen(PORT, function() {
       console.log('Go to http://localhost:' + PORT + '/');

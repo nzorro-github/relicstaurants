@@ -1,4 +1,5 @@
 import axios from 'axios';
+import pino from 'pino';
 import { useQuery } from 'react-query';
 import { Collapse, Form, Rate, Slider } from 'antd';
 
@@ -25,9 +26,10 @@ const Restaurants = () => {
 
   const getRestaurants = async () => {
     const url =
-      process.env.REACT_APP_RESTAURANT_SERVICE_URL ||
+      'http://restaurant-app-svc:3001/api/restaurants' ||
       'http://localhost:3001/api/restaurants';
-
+    console.log(url);
+    pino().info(`Fetching restaurants from ${url}`);
     const { data } = await axios.get(url);
     return data;
   };

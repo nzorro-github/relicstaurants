@@ -24,29 +24,32 @@ spec:
         - name: mongo-data
           mountPath: /data/db
       - name: restaurant-app
-        command: ['/usr/local/bin/serve', '-s', 'build']
-        image: nzorro/restaurant-app:latest
+        imagePullPolicy: Always
+        command: ["npm", "run", "start"]
+        image: docker.io/nzorro/restaurant-app
       - name: restaurant-service
-        command: ['node', './restaurantService/start.js']
-        image: nzorro/restaurant-app:latest
+        command: ["npm", "run", "restaurantService"]
+        image: docker.io/nzorro/restaurant-app
         env:
         - name: STORAGE
           value: "mongo"
         - name: MONGODB_URI
           value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+
       - name: checkout
         command: ['node', './checkoutService/start.js']
-        image: nzorro/restaurant-app:latest
+        image: docker.io/nzorro/restaurant-app
+
       - name: menu
         command: ['node', './menuService/start.js']
-        image: nzorro/restaurant-app:latest
+        image: docker.io/nzorro/restaurant-app
         env:
         - name: MONGODB_URI
           value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
-            
-            #      initContainers:  
+
+            #      initContainers:
             #      - name: mongo-seed
-            #        image: nzorro/restaurant-app:latest
+            #        image: docker.io/nzorro/restaurant-app
             #        command: ["node", "/app/restaurantService/seed.js"]
             #        restartPolicy: Always
             #        env:
@@ -60,6 +63,7 @@ spec:
         emptyDir: {}
       imagePullSecrets:
       - name: regcred
+
 
 ---
 # Service for the restaurant app
@@ -88,6 +92,7 @@ spec:
     port: 3003
     targetPort: 3003
   type: LoadBalancer
+
 ---
 apiVersion: v1
 kind: Service
