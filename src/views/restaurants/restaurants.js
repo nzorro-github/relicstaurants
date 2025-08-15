@@ -25,9 +25,7 @@ const Restaurants = () => {
   const [form] = Form.useForm();
 
   const getRestaurants = async () => {
-    const url =
-      'http://restaurant-app-svc:3001/api/restaurants' ||
-      'http://localhost:3001/api/restaurants';
+    const url = 'http://lvh.me:3001/api/restaurants';
     console.log(url);
     pino().info(`Fetching restaurants from ${url}`);
     const { data } = await axios.get(url);

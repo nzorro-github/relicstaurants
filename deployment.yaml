@@ -15,55 +15,46 @@ spec:
         app: restaurant-app
     spec:
       containers:
-      - name: mongodb
-        image: mongo:6
-        args: ["--bind_ip", "0.0.0.0"]
-        ports:
-        - containerPort: 27017
-        volumeMounts:
-        - name: mongo-data
-          mountPath: /data/db
-      - name: restaurant-app
-        imagePullPolicy: Always
-        command: ["npm", "run", "start"]
-        image: docker.io/nzorro/restaurant-app
-      - name: restaurant-service
-        command: ["npm", "run", "restaurantService"]
-        image: docker.io/nzorro/restaurant-app
-        env:
-        - name: STORAGE
-          value: "mongo"
-        - name: MONGODB_URI
-          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+        - name: mongodb
+          image: mongo:6
+          args: ["--bind_ip", "0.0.0.0"]
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+        - name: restaurant-app
+          imagePullPolicy: Always
+          command: ["npm", "run", "start"]
+          image: docker.io/nzorro/restaurant-app:v0.1
+        - name: restaurant-service
+          command: ["npm", "run", "restaurantService"]
+          image: docker.io/nzorro/restaurant-app:v0.1
+          env:
+            - name: STORAGE
+              value: "mongo"
+            - name: MONGODB_URI
+              value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
 
-      - name: checkout
-        command: ['node', './checkoutService/start.js']
-        image: docker.io/nzorro/restaurant-app
+        - name: checkout
+          command: ["npm", "run", "checkoutService"]
+          image: docker.io/nzorro/restaurant-app:v0.1
 
-      - name: menu
-        command: ['node', './menuService/start.js']
-        image: docker.io/nzorro/restaurant-app
-        env:
-        - name: MONGODB_URI
-          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
+        - name: menu
+          command: ["npm", "run", "menuService"]
+          image: docker.io/nzorro/restaurant-app:v0.1
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
 
-            #      initContainers:
-            #      - name: mongo-seed
-            #        image: docker.io/nzorro/restaurant-app
-            #        command: ["node", "/app/restaurantService/seed.js"]
-            #        restartPolicy: Always
-            #        env:
-            #        - name: MONGODB_URI
-            #          value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
-        volumeMounts:
-        - name: mongo-data
-          mountPath: /data/db
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
       volumes:
-      - name: mongo-data
-        emptyDir: {}
+        - name: mongo-data
+          emptyDir: {}
       imagePullSecrets:
-      - name: regcred
-
+        - name: regcred
 
 ---
 # Service for the restaurant app
@@ -75,22 +66,22 @@ spec:
   selector:
     app: restaurant-app
   ports:
-  - name: main
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
-  - name: restaurant-service
-    protocol: TCP
-    port: 3001
-    targetPort: 3001
-  - name: checkout-service
-    protocol: TCP
-    port: 3002
-    targetPort: 3002
-  - name: menu-service
-    protocol: TCP
-    port: 3003
-    targetPort: 3003
+    - name: main
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+    - name: restaurant-service
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+    - name: checkout-service
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
+    - name: menu-service
+      protocol: TCP
+      port: 3003
+      targetPort: 3003
   type: LoadBalancer
 
 ---
@@ -102,7 +93,7 @@ spec:
   selector:
     app: restaurant-app
   ports:
-  - protocol: TCP
-    port: 27017
-    targetPort: 27017
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
   type: ClusterIP
