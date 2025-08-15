@@ -16,9 +16,7 @@ const Payments = () => {
   const { Option } = Select;
 
   const handleOrderSending = async (payload) => {
-    const url =
-      `http://restaurant-app-svc:3002/api/checkout` ||
-      'http://lvh.me:3002/api/checkout';
+    const url = 'http://lvh.me:3002/api/checkout';
     await axios.post(url, payload);
   };
 
