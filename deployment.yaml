@@ -15,18 +15,11 @@ spec:
         app: restaurant-app
     spec:
       containers:
-        - name: mongodb
-          image: mongo:6
-          args: ["--bind_ip", "0.0.0.0"]
-          ports:
-            - containerPort: 27017
-          volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
         - name: restaurant-app
           imagePullPolicy: Always
-          command: ["npm", "run", "start"]
+          command: ["serve", "-s", "build"]
           image: docker.io/nzorro/restaurant-app:v0.1
+
         - name: restaurant-service
           command: ["npm", "run", "restaurantService"]
           image: docker.io/nzorro/restaurant-app:v0.1
@@ -47,14 +40,38 @@ spec:
             - name: MONGODB_URI
               value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
 
+      imagePullSecrets:
+        - name: regcred
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-app-mongodb
+  labels:
+    app: restaurant-app-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurant-app-mongodb
+  template:
+    metadata:
+      labels:
+        app: restaurant-app-mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:6
+          args: ["--bind_ip", "0.0.0.0"]
+          ports:
+            - containerPort: 27017
           volumeMounts:
             - name: mongo-data
               mountPath: /data/db
       volumes:
         - name: mongo-data
           emptyDir: {}
-      imagePullSecrets:
-        - name: regcred
 
 ---
 # Service for the restaurant app
@@ -70,18 +87,25 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: 3000
+      nodePort: 30000
+
     - name: restaurant-service
       protocol: TCP
       port: 3001
       targetPort: 3001
+      nodePort: 30001
+
     - name: checkout-service
       protocol: TCP
       port: 3002
       targetPort: 3002
+      nodePort: 30002
+
     - name: menu-service
       protocol: TCP
       port: 3003
       targetPort: 3003
+      nodePort: 30003
   type: LoadBalancer
 
 ---
@@ -91,7 +115,7 @@ metadata:
   name: restaurant-mongo-svc
 spec:
   selector:
-    app: restaurant-app
+    app: restaurant-app-mongodb
   ports:
     - protocol: TCP
       port: 27017
