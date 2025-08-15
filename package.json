@@ -31,9 +31,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "checkoutService": "nodemon ./checkoutService/start.js --watch checkoutService",
-    "menuService": "nodemon ./menuService/start.js --watch menuService",
-    "restaurantService": "nodemon ./restaurantService/start.js --watch restaurantService"
+    "checkoutService": "nodemon ./backend/checkoutService/start.js --watch checkoutService",
+    "menuService": "nodemon ./backend/menuService/start.js --watch menuService",
+    "restaurantService": "nodemon ./backend/restaurantService/start.js --watch restaurantService"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json}": [

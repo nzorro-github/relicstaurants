@@ -16,7 +16,9 @@ const Payments = () => {
   const { Option } = Select;
 
   const handleOrderSending = async (payload) => {
-    const url = 'http://lvh.me:3002/api/checkout';
+    const url =
+      `${process.env.REACT_APP_CHECKOUT_API_URL}/api/checkout` ||
+      'http://lvh.me:3002/api/checkout';
     await axios.post(url, payload);
   };
 

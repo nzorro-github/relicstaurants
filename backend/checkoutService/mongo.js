@@ -1,5 +1,5 @@
 const { MongoClient, ObjectId } = require('mongodb');
-var RestaurantRecord = require('./model').Restaurant;
+var RestaurantRecord = require('../restaurantService/model').Restaurant;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 let client = null;
 

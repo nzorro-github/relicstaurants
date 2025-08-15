@@ -13,7 +13,9 @@ import {
 } from './single-restaurant.styled';
 
 const getRestaurant = async (id) => {
-  const url = `http://lvh.me:3003/api/menu/${id}`;
+  const url =
+    `${process.env.REACT_APP_MENU_API_URL}/api/menu/${id}` ||
+    `http://lvh.me:3003/api/menu/${id}`;
   console.log(url);
   const { data } = await axios.get(url);
 

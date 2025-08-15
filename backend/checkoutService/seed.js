@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const MongoClient = require('mongodb').MongoClient;
 
-const uri = 'mongodb://localhost:27017'; // replace with your MongoDB connection string
+const uri = 'mongodb://restaurant-mongo-svc:27017'; // replace with your MongoDB connection string
 const dbName = 'restaurantdb';
 const collectionName = 'restaurants';
 
