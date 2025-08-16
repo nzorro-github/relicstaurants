@@ -28,7 +28,6 @@ const Restaurants = () => {
     const url =
       `${process.env.REACT_APP_RESTAURANT_API_URL}/api/restaurants` ||
       'http://lvh.me:3001/api/restaurants';
-    console.log(`Fetching restaurants from ${url}`);
     const { data } = await axios.get(url);
     return data;
   };

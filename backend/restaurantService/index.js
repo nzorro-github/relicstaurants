@@ -52,7 +52,6 @@ exports.start = function (PORT, STATIC_DIR, DATA_FILE) {
       if (!items || items.length === 0) {
         return res.status(404).send({ error: 'No restaurants found' });
       }
-      console.log(`Found ${items.length} restaurants`);
 
       const response = res.status(200).send(items.map(removeMenuItems));
       return response;
