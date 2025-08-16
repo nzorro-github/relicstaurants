@@ -16,9 +16,8 @@ const getRestaurant = async (id) => {
   const url =
     `${process.env.REACT_APP_MENU_API_URL}/api/menu/${id}` ||
     `http://lvh.me:3003/api/menu/${id}`;
-  console.log(url);
   const { data } = await axios.get(url);
-
+  console.log(data);
   return data;
 };
 
@@ -50,41 +49,43 @@ const SingleRestaurant = () => {
       ]);
     }
   };
-
-  const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
-    {
-      title: 'Add to cart',
-      render: (clickedRow) => (
-        <Button onClick={() => handleAddToCart(clickedRow)}>Add</Button>
-      ),
-    },
-  ];
-
-  return (
-    <ViewWrapper>
-      <RestaurantHead>
-        <RestaurantImage
-          alt={data?.name}
-          src={require(`./../../assets/images/restaurants/${id}.jpg`)}
+  console.log(data);
+  if (data === undefined) {
+    return <ViewWrapper>Loading...</ViewWrapper>;
+  } else {
+    const columns = [
+      { title: 'Name', dataIndex: 'name', key: 'name' },
+      { title: 'Price', dataIndex: 'price', key: 'price' },
+      {
+        title: 'Add to cart',
+        render: (clickedRow) => (
+          <Button onClick={() => handleAddToCart(clickedRow)}>Add</Button>
+        ),
+      },
+    ];
+    return (
+      <ViewWrapper>
+        <RestaurantHead>
+          <RestaurantImage
+            alt={data?.name}
+            src={require(`./../../assets/images/restaurants/${id}.jpg`)}
+          />
+          <RestaurantData>
+            <h1>{data?.name}</h1>
+            <Rate value={data?.rating} disabled />
+            <p>{data?.description}</p>
+            <p>You can find us at {data?.location}</p>
+          </RestaurantData>
+        </RestaurantHead>
+        <Divider />
+        <h4>Menu</h4>
+        <Table
+          dataSource={data?.menuItems}
+          columns={columns}
+          style={{ width: '100%' }}
         />
-        <RestaurantData>
-          <h1>{data?.name}</h1>
-          <Rate value={data?.rating} disabled />
-          <p>{data?.description}</p>
-          <p>You can find us at {data?.location}</p>
-        </RestaurantData>
-      </RestaurantHead>
-      <Divider />
-      <h4>Menu</h4>
-      <Table
-        dataSource={data?.menuItems}
-        columns={columns}
-        style={{ width: '100%' }}
-      />
-    </ViewWrapper>
-  );
+      </ViewWrapper>
+    );
+  }
 };
-
 export default SingleRestaurant;
