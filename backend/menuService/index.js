@@ -31,8 +31,8 @@ exports.start = function (PORT, STATIC_DIR, DATA_FILE) {
   });
 
   // API
-  app.get(API_URL, function (req, res, _next) {
-    const restaurant = storage.getById(req.params.id);
+  app.get(API_URL, async function (req, res, _next) {
+    const restaurant = await storage.getById(req.params.id);
 
     if (restaurant) {
       return res.status(200).send(restaurant);
@@ -52,7 +52,7 @@ exports.start = function (PORT, STATIC_DIR, DATA_FILE) {
       return res.status(200).send(restaurant);
     }
 
-    restaurant = new RestaurantRecord(req.body);  
+    restaurant = new RestaurantRecord(req.body);
     if (restaurant.validate(errors)) {
       storage.add(restaurant);
       return res.status(201).send(restaurant);

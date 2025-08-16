@@ -8,53 +8,58 @@ const seedDatabase = require('./seed');
 seedDatabase();
 
 class MongoStorage {
-    constructor() {
-        if (!client) {
-            client = new MongoClient(MONGODB_URI, { useUnifiedTopology: true });
-        }
-        this.collection = client.db().collection('restaurants');
+  constructor() {
+    if (!client) {
+      client = new MongoClient(MONGODB_URI, { useUnifiedTopology: true });
+    }
+    this.collection = client.db().collection('restaurants');
+  }
+
+  async _connect() {
+    if (!client.topology || !client.topology.isConnected()) {
+      await client.connect();
+    }
+  }
+
+  async getAll() {
+    await this._connect();
+    const items = await this.collection.find().toArray();
+
+    let restaurantItems = [];
+    if (items && items.length) {
+      items.forEach((item, i) => {
+        const record = { ...item };
+        restaurantItems.push(new RestaurantRecord(record));
+      });
     }
 
-    async _connect() {
-        if (!client.topology || 
-            !client.topology.isConnected()) {
-            await client.connect();
-        }
-    }
+    return restaurantItems;
+  }
 
-    async getAll() {
-        await this._connect();
-        const items = await this.collection.find().toArray();
+  async add(data) {
+    await this._connect();
+    const item = { ...data };
 
-        let restaurantItems = [];
-        if (items && items.length) {
-            items.forEach((item, i) => {
-                const record = { ...item };
-                restaurantItems.push(new RestaurantRecord(record));
-            });
-        }
+    await this.collection.insertOne(item);
+  }
 
-        return restaurantItems;
-    }
+  async getById(strID) {
+    await this._connect();
+    const keyPair = { id: strID };
+    console.log('Fetching restaurant with:', keyPair);
+    const item = await this.collection.findOne(keyPair, {
+      projection: { _id: 0 },
+    });
+    console.log('Found restaurant:', item);
+    const record = { ...item };
+    return new RestaurantRecord(record);
+  }
 
-    async add(data) {
-        await this._connect();
-        const item = { ...data };
-        
-        await this.collection.insertOne(item);
-    }
-
-    async getById(id) {
-        await this._connect();
-        const item = await this.collection.findOne({ id: id });
-        return item ? {  ...item } : null;
-    }
-
-    async deleteById(id) {
-        await this._connect();
-        const result = await this.collection.deleteOne({ id: id });
-        return result.deletedCount > 0;
-    }
+  async deleteById(id) {
+    await this._connect();
+    const result = await this.collection.deleteOne({ id: id });
+    return result.deletedCount > 0;
+  }
 }
 
 exports.Mongo = MongoStorage;
