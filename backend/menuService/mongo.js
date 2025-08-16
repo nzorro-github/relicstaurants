@@ -46,11 +46,9 @@ class MongoStorage {
   async getById(strID) {
     await this._connect();
     const keyPair = { id: strID };
-    console.log('Fetching restaurant with:', keyPair);
     const item = await this.collection.findOne(keyPair, {
       projection: { _id: 0 },
     });
-    console.log('Found restaurant:', item);
     const record = { ...item };
     return new RestaurantRecord(record);
   }
