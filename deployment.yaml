@@ -18,11 +18,11 @@ spec:
         - name: restaurant-app
           imagePullPolicy: Always
           command: ["serve", "-s", "build"]
-          image: docker.io/nzorro/restaurant-app:v0.1
+          image: docker.io/nzorro/restaurant-app:v0.2-eks
 
         - name: restaurant-service
           command: ["npm", "run", "restaurantService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
+          image: docker.io/nzorro/restaurant-app:v0.2-eks
           env:
             - name: STORAGE
               value: "mongo"
@@ -31,11 +31,11 @@ spec:
 
         - name: checkout
           command: ["npm", "run", "checkoutService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
+          image: docker.io/nzorro/restaurant-app:v0.2-eks
 
         - name: menu
           command: ["npm", "run", "menuService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
+          image: docker.io/nzorro/restaurant-app:v0.2-eks
           env:
             - name: MONGODB_URI
               value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
@@ -85,7 +85,7 @@ spec:
   ports:
     - name: main
       protocol: TCP
-      port: 3000
+      port: 80
       targetPort: 3000
       nodePort: 30000
 
