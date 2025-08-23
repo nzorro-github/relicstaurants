@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 let RestaurantRecord = require('./model').Restaurant;
 let MongoStorage = require('./mongo').Mongo;
@@ -52,7 +53,7 @@ exports.start = function (PORT, STATIC_DIR, DATA_FILE) {
       if (!items || items.length === 0) {
         return res.status(404).send({ error: 'No restaurants found' });
       }
-
+      morgan().info('Fetched restaurants. Looking at:', items[0]);
       const response = res.status(200).send(items.map(removeMenuItems));
       return response;
     } catch (err) {
