@@ -1,64 +1,119 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: restaurant-app
+  name: frontend
   labels:
-    app: restaurant-app
+    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: restaurant-app
+      app: frontend
   template:
     metadata:
       labels:
-        app: restaurant-app
+        app: frontend
     spec:
       containers:
-        - name: restaurant-app
+        - name: frontend
           imagePullPolicy: Always
           command: ["serve", "-s", "build"]
-          image: docker.io/nzorro/restaurant-app:v0.1
-
-        - name: restaurant-service
-          command: ["npm", "run", "restaurantService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
-          env:
-            - name: STORAGE
-              value: "mongo"
-            - name: MONGODB_URI
-              value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
-
-        - name: checkout
-          command: ["npm", "run", "checkoutService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
-
-        - name: menu
-          command: ["npm", "run", "menuService"]
-          image: docker.io/nzorro/restaurant-app:v0.1
-          env:
-            - name: MONGODB_URI
-              value: "mongodb://restaurant-mongo-svc:27017/restaurantdb"
-
+          image: docker.io/nzorro/restaurant-app:v0.2
+          # add resource requests
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       imagePullSecrets:
         - name: regcred
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: restaurant-app-mongodb
+  name: backend
   labels:
-    app: restaurant-app-mongodb
+    app: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: restaurant-app-mongodb
+      app: backend
   template:
     metadata:
       labels:
-        app: restaurant-app-mongodb
+        app: backend
+    spec:
+      containers:
+        - name: restaurant
+          command: ["node", "backend/restaurantService/start.js"]
+          image: docker.io/nzorro/restaurant-app:v0.2
+          env:
+            - name: STORAGE
+              value: "mongo"
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-svc:27017/restaurantdb"
+          # add resource requests
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        - name: checkout
+          command: ["node", "backend/checkoutService/start.js"]
+          image: docker.io/nzorro/restaurant-app:v0.2
+          env:
+            - name: STORAGE
+              value: "mongo"
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-svc:27017/restaurantdb"          
+          # add resource requests
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        - name: menu
+          command: ["node", "backend/menuService/start.js"]
+          image: docker.io/nzorro/restaurant-app:v0.2
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-svc:27017/restaurantdb"
+          # add resource requests
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: regcred
+---
+# MongoDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
     spec:
       containers:
         - name: mongodb
@@ -69,55 +124,14 @@ spec:
           volumeMounts:
             - name: mongo-data
               mountPath: /data/db
+          # add resource requests
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"              
       volumes:
         - name: mongo-data
           emptyDir: {}
-
----
-# Service for the restaurant app
-apiVersion: v1
-kind: Service
-metadata:
-  name: restaurant-app-svc
-spec:
-  selector:
-    app: restaurant-app
-  ports:
-    - name: main
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
-      nodePort: 30000
-
-    - name: restaurant-service
-      protocol: TCP
-      port: 3001
-      targetPort: 3001
-      nodePort: 30001
-
-    - name: checkout-service
-      protocol: TCP
-      port: 3002
-      targetPort: 3002
-      nodePort: 30002
-
-    - name: menu-service
-      protocol: TCP
-      port: 3003
-      targetPort: 3003
-      nodePort: 30003
-  type: LoadBalancer
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: restaurant-mongo-svc
-spec:
-  selector:
-    app: restaurant-app-mongodb
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-  type: ClusterIP

@@ -1,0 +1,98 @@
+
+---
+# Frontend Service for the restaurant app
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: main
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+
+  type: LoadBalancer
+---
+# Backend Service for the restaurant app
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: restaurant
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+
+    - name: checkout
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
+
+    - name: menu
+      protocol: TCP
+      port: 3003
+      targetPort: 3003
+
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-svc
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  type: ClusterIP
+
+---
+# Ingress for the restaurant app
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: restaurant-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: restaurant.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+          - path: /api/restaurants
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3001
+          - path: /api/checkout
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3002
+          - path: /api/menu
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 3003
